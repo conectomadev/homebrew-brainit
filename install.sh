@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 # brainit CLI installer (macOS / Linux, no Homebrew required).
 #
-#   curl -fsSL https://www.brainit.dev/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/conectomadev/homebrew-brainit/main/install.sh | bash
 #
 # Installs Bun if missing, downloads the brainit CLI package, fetches its
 # runtime deps, and drops a `brainit` command on your PATH.
 #
-# Override the source with BRAINIT_BASE_URL if you self-host.
+# Downloads come from the public GitHub release by default. Set BRAINIT_BASE_URL
+# to front them behind your own domain (expects <base>/releases/<ver>/brainit-cli.tar.gz).
 set -euo pipefail
 
-BASE_URL="${BRAINIT_BASE_URL:-https://www.brainit.dev}"
+REPO="conectomadev/homebrew-brainit"
+BASE_URL="${BRAINIT_BASE_URL:-}"
 VERSION="${BRAINIT_VERSION:-latest}"
 PREFIX="${BRAINIT_PREFIX:-$HOME/.brainit}"
 BIN_DIR="${BRAINIT_BIN_DIR:-$HOME/.local/bin}"
@@ -28,11 +30,18 @@ fi
 BUN="$(command -v bun || echo "$HOME/.bun/bin/bun")"
 [ -x "$BUN" ] || err "Bun install failed; install it from https://bun.sh and re-run."
 
-# 2. Resolve the package tarball URL (domain-fronted; no GitHub slug exposed).
-if [ "$VERSION" = "latest" ]; then
-  URL="$BASE_URL/releases/latest/brainit-cli.tar.gz"
+# 2. Resolve the package tarball URL.
+if [ -n "$BASE_URL" ]; then
+  # Self-hosted / domain-fronted.
+  if [ "$VERSION" = "latest" ]; then
+    URL="$BASE_URL/releases/latest/brainit-cli.tar.gz"
+  else
+    URL="$BASE_URL/releases/$VERSION/brainit-cli.tar.gz"
+  fi
+elif [ "$VERSION" = "latest" ]; then
+  URL="https://github.com/$REPO/releases/latest/download/brainit-cli.tar.gz"
 else
-  URL="$BASE_URL/releases/$VERSION/brainit-cli.tar.gz"
+  URL="https://github.com/$REPO/releases/download/$VERSION/brainit-cli.tar.gz"
 fi
 
 # 3. Download + extract.
