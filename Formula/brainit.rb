@@ -2,7 +2,7 @@ class Brainit < Formula
   desc "Turn a local repo into code-embeddings docs + semantic vectors"
   homepage "https://www.brainit.dev"
   version "0.1.0"
-  url "https://www.brainit.dev/releases/v0.1.0/brainit-cli.tar.gz"
+  url "https://github.com/conectomadev/homebrew-brainit/releases/download/v0.1.0/brainit-cli.tar.gz"
   sha256 "bb4c205f707b285cbbed25b3eae5446e86da8145e298b2ae336615298a4845d9"
   license "MIT"
 
